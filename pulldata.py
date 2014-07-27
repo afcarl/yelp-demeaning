@@ -8,8 +8,9 @@ import pandas as pd
 def city_generator(text):
 	areas = [] # list of dicts with key country, city, hood
 	status = 'start' # start looking for a country
-	hood_re = re.compile('<li>([A-z\s]*)</li>')
+	hood_re = re.compile(r'<li>(.+)</li>')
 	city_state_re = re.compile(r'<li>([A-z\s\.\-]*),(.*)')
+	aus_city_state_re = re.compile(r'<li>([A-z0-9]*)\s(.+)')
 	for ii,line in enumerate(text):
 		if status == 'start':
 			is_start = line.find('hahastartnow')
@@ -20,12 +21,19 @@ def city_generator(text):
 			country_idx = line.find('<li>')
 			if country_idx > -1:
 				country = line[country_idx+4:]
-				print country
 				status = 'city'
 			continue
 		if status == 'city':
 			city_idx = line.find('<li>')
 			if city_idx > -1:
+				if country == 'Australia':
+					import ipdb
+					ipdb.set_trace()
+					city_match = aus_city_state_re.search(line)
+					if city_match is not None:
+						city,state = city_match.group(1),city_match.group(2).strip()
+						status = 'hood'
+						continue
 				if country != 'USA':
 					city = line[city_idx+4:]
 					state = ''
@@ -34,8 +42,14 @@ def city_generator(text):
 					city_match = city_state_re.search(line)
 					if city_match is not None:
 						city,state = city_match.group(1),city_match.group(2).strip()
+						
 					if (city == 'New York') & (state == 'NY'):
+
 						status = 'borough'
+					else:
+						status = 'hood'
+						
+					continue
 			if line == '</ul>':
 				status = 'country'
 			continue
@@ -53,6 +67,7 @@ def city_generator(text):
 				borough = line[borough_idx+4:]
 				status = 'borough_hood'
 			if line == '</ul>':
+				
 				status = 'city'
 			continue
 		if status == 'borough_hood':
