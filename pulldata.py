@@ -9,7 +9,7 @@ def find_place_in_hood(hood,place):
 	hood = hood.replace(' ','+')
 	place = place.replace(' ','+')
 	yelpie = yelp.yelp_api()
-	s_url = yelpie.request_url('http://api.yelp.com/v2/search?term=' + place + '&location=' + hood,auth_dict)
+	s_url = yelpie.request_url('http://api.yelp.com/v2/search?term=' + place + '&location=' + hood)
 	req = requests.get(s_url)
 	if req.status_code == 200:
 		json_req = req.json()

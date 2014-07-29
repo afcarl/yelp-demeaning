@@ -1,4 +1,5 @@
 import oauth2
+import json
 # get neighborhoods
 
 class yelp_api(object):
@@ -11,7 +12,7 @@ class yelp_api(object):
 		yelp_token = credentials['token']
 		yelp_token_secret = credentials['token_secret']
 
-		self.auth_dict = {
+		self.auth = {
 			'consumer_key': yelp_consumer_key,
 			'consumer_secret': yelp_consumer_secret,
 			'token': yelp_token,
@@ -20,7 +21,7 @@ class yelp_api(object):
 
 
 
-	def self.request_url(self,url):
+	def request_url(self,url):
 		consumer = oauth2.Consumer(self.auth['consumer_key'], self.auth['consumer_secret'])
 		oauth_request = oauth2.Request('GET', url, {})
 		oauth_request.update(
